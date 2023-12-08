@@ -1,0 +1,28 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+version = '0.0.1'
+group = 'io.svdparser'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+    
+    // Always run tests, even when nothing changed.
+    dependsOn 'cleanTest'
+
+    // Show test results.
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
