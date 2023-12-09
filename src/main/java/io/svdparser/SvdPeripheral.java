@@ -20,11 +20,10 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-
 public class SvdPeripheral {
 	private String mName;
 	private Long mBaseAddr;
-	List<SvdAddressBlock> mAddressBlocks;
+	private List<SvdAddressBlock> mAddressBlocks;
 
 	public static SvdPeripheral fromElement(Element el) throws SvdParserException {
 		// Get a name
@@ -34,7 +33,7 @@ public class SvdPeripheral {
 		// Get the base addr
 		Element baseAddrElement = Utils.getSingleFirstOrderChildElementByTagName(el, "baseAddress");
 		Long baseAddr = Long.decode(baseAddrElement.getTextContent());
-		
+
 		// Parse address blocks
 		List<SvdAddressBlock> addressBlocks = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
@@ -56,7 +55,7 @@ public class SvdPeripheral {
 	public Long getBaseAddr() {
 		return mBaseAddr;
 	}
-	
+
 	public List<SvdAddressBlock> getAddressBlocks() {
 		return mAddressBlocks;
 	}
