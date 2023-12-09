@@ -17,6 +17,7 @@ jobs:
         allowUpdates: true
 
   publish:
+    needs: release
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,7 +35,6 @@ jobs:
         distribution: 'temurin'
 
     - name: Publish to Github
-      needs: release
       uses: gradle/gradle-build-action@v2.10.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
