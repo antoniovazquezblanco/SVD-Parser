@@ -21,6 +21,9 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+/**
+ * This is a class containing miscellaneous SVD parsing functions and helpers.
+ */
 public class Utils {
 	static List<Element> getFirstOrderChildElementsByTagName(Element parent, String name) {
 		List<Element> nodeList = new ArrayList<>();
