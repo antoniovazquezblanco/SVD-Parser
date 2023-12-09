@@ -20,11 +20,21 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
+/**
+ * This class represents a device peripheral.
+ */
 public class SvdPeripheral {
 	private String mName;
 	private Long mBaseAddr;
 	private List<SvdAddressBlock> mAddressBlocks;
 
+	/**
+	 * Create an SvdPeripheral from a DOM element.
+	 * 
+	 * @param el DOM element object.
+	 * @return A SvdPeripheral peripheral object.
+	 * @throws SvdParserException on SVD format errors.
+	 */
 	public static SvdPeripheral fromElement(Element el) throws SvdParserException {
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
@@ -48,14 +58,29 @@ public class SvdPeripheral {
 		mAddressBlocks = addressBlocks;
 	}
 
+	/**
+	 * Get the peripheral name.
+	 * 
+	 * @return A string representing a peripheral name.
+	 */
 	public String getName() {
 		return mName;
 	}
 
+	/**
+	 * Get the peripheral base address.
+	 * 
+	 * @return The base address of the peripheral.
+	 */
 	public Long getBaseAddr() {
 		return mBaseAddr;
 	}
 
+	/**
+	 * Get a list of address blocks that the peripheral contains.
+	 * 
+	 * @return A list of SvdAddressBlock objects.
+	 */
 	public List<SvdAddressBlock> getAddressBlocks() {
 		return mAddressBlocks;
 	}
