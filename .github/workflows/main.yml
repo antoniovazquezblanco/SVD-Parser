@@ -23,4 +23,4 @@ jobs:
       uses: gradle/gradle-build-action@v2.10.0
       with:
         gradle-version: 8.5
-        arguments: build
+        arguments: printVersion build
