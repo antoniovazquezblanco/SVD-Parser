@@ -34,7 +34,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Publish to Github
+    - name: Publish
       uses: gradle/gradle-build-action@v2.10.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
