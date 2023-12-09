@@ -38,6 +38,8 @@ jobs:
       uses: gradle/gradle-build-action@v2.10.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
       with:
         gradle-version: 8.5
-        arguments: printVersion publishSvdparserPublicationToGitHubRepository
+        arguments: printVersion publish
