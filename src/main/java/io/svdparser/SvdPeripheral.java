@@ -36,7 +36,7 @@ public class SvdPeripheral {
 		Long baseAddr = Long.decode(baseAddrElement.getTextContent());
 		
 		// Parse address blocks
-		List<SvdAddressBlock> addressBlocks = new ArrayList<SvdAddressBlock>();
+		List<SvdAddressBlock> addressBlocks = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
 			addressBlocks.add(SvdAddressBlock.fromElement(e));
 

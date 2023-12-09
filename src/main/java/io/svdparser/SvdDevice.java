@@ -58,7 +58,7 @@ public class SvdDevice {
 
 		// Parse peripherals info
 		Element peripheralsElement = Utils.getSingleFirstOrderChildElementByTagName(el, "peripherals");
-		List<SvdPeripheral> periphs = new ArrayList<SvdPeripheral>();
+		List<SvdPeripheral> periphs = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(peripheralsElement, "peripheral"))
 			periphs.add(SvdPeripheral.fromElement(e));
 		

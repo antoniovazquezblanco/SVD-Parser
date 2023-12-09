@@ -8,7 +8,7 @@ import org.w3c.dom.Node;
 
 public class Utils {
 	static List<Element> getFirstOrderChildElementsByTagName(Element parent, String name) {
-		List<Element> nodeList = new ArrayList<Element>();
+		List<Element> nodeList = new ArrayList<>();
 		for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling())
 			if (child.getNodeType() == Node.ELEMENT_NODE && name.equals(child.getNodeName()))
 				nodeList.add((Element) child);
