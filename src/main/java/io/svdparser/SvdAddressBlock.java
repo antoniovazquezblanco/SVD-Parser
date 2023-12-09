@@ -44,8 +44,4 @@ public class SvdAddressBlock {
 	public Long getSize() {
 		return mSize;
 	}
-
-	public Long getTotalSize() {
-		return mOffset + mSize;
-	}
 }
