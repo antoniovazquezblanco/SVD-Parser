@@ -15,7 +15,8 @@
  */
 /**
  * A parser for CMSIS Simple View Description files.
- * @see{https://www.keil.com/pack/doc/CMSIS/SVD/html/index.html} for more
- * information.
+ *
+ * @see <a href="https://www.keil.com/pack/doc/CMSIS/SVD/html/index.html">CMSIS
+ *      System View Description webpage</a> for more information.
  */
 package io.svdparser;
