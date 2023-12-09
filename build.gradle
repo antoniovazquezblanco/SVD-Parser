@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-version = '0.0.1'
 group = 'io.github.antoniovazquezblanco'
+version = '0.0.1'
 
 repositories {
 	mavenCentral()
@@ -13,6 +13,11 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+    withSourcesJar()
+    //withJavadocJar()
 }
 
 test {
@@ -25,4 +30,30 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
     }
+}
+
+publishing {
+	publications {
+        svdparser(MavenPublication) {
+            from components.java
+        }
+    }
+	repositories {
+		maven {
+			name = "OSSRH"
+			url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+			credentials {
+				username = System.getenv("MAVEN_USERNAME")
+				password = System.getenv("MAVEN_PASSWORD")
+		    }
+		}
+		maven {
+			name = "GitHub"
+			url = "https://maven.pkg.github.com/antoniovazquezblanco/SVD-Parser"
+			credentials {
+				username = System.getenv("GITHUB_ACTOR")
+				password = System.getenv("GITHUB_TOKEN")
+			}
+		}
+	}
 }
