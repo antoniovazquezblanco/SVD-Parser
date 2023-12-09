@@ -15,7 +15,7 @@
  */
 package io.svdparser;
 
-public class SvdParserException extends Exception {
+public class SvdParserException extends RuntimeException {
 
 	private static final long serialVersionUID = 7346114051394569394L;
 
