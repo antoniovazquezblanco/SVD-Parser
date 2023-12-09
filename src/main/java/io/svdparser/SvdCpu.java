@@ -17,15 +17,26 @@ package io.svdparser;
 
 import org.w3c.dom.Element;
 
+/**
+ * This represents the CPU section in a SVD file. The CPU section describes the
+ * processor included in the microcontroller device. This section is mandatory
+ * if the SVD file is used to generate the device header file.
+ */
 public class SvdCpu {
-
+	/**
+	 * Construct a CPU object from a DOM element.
+	 *
+	 * @param el DOM element.
+	 * @return A SvdCpu object.
+	 * @throws SvdParserException when the element does not correspond to a CPU.
+	 */
 	public static SvdCpu fromElement(Element el) throws SvdParserException {
 		if (!el.getNodeName().equals("cpu"))
 			throw new SvdParserException("Cannot build an SvdCpu from a " + el.getNodeName() + " node!");
 		return new SvdCpu();
 	}
-	
+
 	private SvdCpu() {
-		
+
 	}
 }
