@@ -27,6 +27,7 @@ public class SvdPeripheral {
 	private String mName;
 	private Long mBaseAddr;
 	private List<SvdAddressBlock> mAddressBlocks;
+	private List<SvdRegister> mRegisters;
 
 	/**
 	 * Create an SvdPeripheral from a DOM element.
@@ -49,13 +50,21 @@ public class SvdPeripheral {
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
 			addressBlocks.add(SvdAddressBlock.fromElement(e));
 
-		return new SvdPeripheral(name, baseAddr, addressBlocks);
+		// Parse registers
+		List<SvdRegister> registers = new ArrayList<>();
+		Element registersElement = Utils.getSingleFirstOrderChildElementByTagName(el, "registers");
+		if (registersElement != null)
+			for (Element e : Utils.getFirstOrderChildElementsByTagName(registersElement, "register"))
+				registers.add(SvdRegister.fromElement(e));
+
+		return new SvdPeripheral(name, baseAddr, addressBlocks, registers);
 	}
 
-	private SvdPeripheral(String name, Long baseAddr, List<SvdAddressBlock> addressBlocks) {
+	private SvdPeripheral(String name, Long baseAddr, List<SvdAddressBlock> addressBlocks, List<SvdRegister> registers) {
 		mName = name;
 		mBaseAddr = baseAddr;
 		mAddressBlocks = addressBlocks;
+		mRegisters = registers;
 	}
 
 	/**
@@ -83,6 +92,15 @@ public class SvdPeripheral {
 	 */
 	public List<SvdAddressBlock> getAddressBlocks() {
 		return mAddressBlocks;
+	}
+	
+	/**
+	 * Get a list of registers that the peripheral contains.
+	 * 
+	 * @return A list of SvdRegister objects.
+	 */
+	public List<SvdRegister> getRegisters() {
+		return mRegisters;
 	}
 
 	public String toString() {

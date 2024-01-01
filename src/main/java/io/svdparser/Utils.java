@@ -35,7 +35,9 @@ public class Utils {
 
 	static Element getSingleFirstOrderChildElementByTagName(Element parent, String name) throws SvdParserException {
 		List<Element> elements = Utils.getFirstOrderChildElementsByTagName(parent, name);
-		if (elements.size() != 1)
+		if (elements.size() == 0)
+			return null;
+		if (elements.size() > 1)
 			throw new SvdParserException("More than one " + name + " element in " + parent.getNodeName() + "!");
 		return elements.get(0);
 	}
