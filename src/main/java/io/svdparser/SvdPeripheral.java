@@ -36,7 +36,7 @@ public class SvdPeripheral {
 	 * @return A SvdPeripheral peripheral object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static SvdPeripheral fromElement(Element el) throws SvdParserException {
+	public static SvdPeripheral fromElement(Element el, int defaultSize) throws SvdParserException {
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
 		String name = nameElement.getTextContent();
@@ -49,13 +49,18 @@ public class SvdPeripheral {
 		List<SvdAddressBlock> addressBlocks = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
 			addressBlocks.add(SvdAddressBlock.fromElement(e));
+		
+		// Try to parse a size element
+		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
+		if (sizeElement != null)
+			defaultSize = Integer.decode(sizeElement.getTextContent());
 
 		// Parse registers
 		List<SvdRegister> registers = new ArrayList<>();
 		Element registersElement = Utils.getSingleFirstOrderChildElementByTagName(el, "registers");
 		if (registersElement != null)
 			for (Element e : Utils.getFirstOrderChildElementsByTagName(registersElement, "register"))
-				registers.add(SvdRegister.fromElement(e));
+				registers.add(SvdRegister.fromElement(e, defaultSize));
 
 		return new SvdPeripheral(name, baseAddr, addressBlocks, registers);
 	}

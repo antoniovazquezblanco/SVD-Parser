@@ -30,9 +30,24 @@ import org.xml.sax.SAXException;
 class SvdDeviceTest {
 
 	@Test
-	void test() {
+	void testSample() {
 		try {
-			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/sample.svd"));
+			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/00_sample.svd"));
+			List<SvdPeripheral> periphs = dev.getPeripherals();
+			assertNotEquals(periphs.size(), 0);
+			for (SvdPeripheral p : periphs) {
+				System.out.println(p.toString());
+			}
+		} catch (SAXException | IOException | ParserConfigurationException | SvdParserException e) {
+			e.printStackTrace();
+			fail("Failed to parse sample file!");
+		}
+	}
+
+	@Test
+	void testSample01() {
+		try {
+			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/01_default_size.svd"));
 			List<SvdPeripheral> periphs = dev.getPeripherals();
 			assertNotEquals(periphs.size(), 0);
 			for (SvdPeripheral p : periphs) {

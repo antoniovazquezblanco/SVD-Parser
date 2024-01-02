@@ -34,7 +34,7 @@ public class SvdRegister {
 	 * @return A SvdRegister object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static SvdRegister fromElement(Element el) throws SvdParserException {
+	public static SvdRegister fromElement(Element el, Integer defaultSize) throws SvdParserException {
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
 		String name = nameElement.getTextContent();
@@ -45,13 +45,14 @@ public class SvdRegister {
 
 		// Get the size
 		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
-		Integer size = Integer.decode(sizeElement.getTextContent());
+		if (sizeElement != null)
+			defaultSize = Integer.decode(sizeElement.getTextContent());
 
 		// Get the offset
 		Element offsetElement = Utils.getSingleFirstOrderChildElementByTagName(el, "addressOffset");
 		Integer offset = Integer.decode(offsetElement.getTextContent());
 
-		return new SvdRegister(name, description, size, offset);
+		return new SvdRegister(name, description, defaultSize, offset);
 	}
 
 	private SvdRegister(String name, String description, int size, int offset) {

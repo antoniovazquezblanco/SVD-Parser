@@ -86,11 +86,17 @@ public class SvdDevice {
 		Element cpuElement = Utils.getSingleFirstOrderChildElementByTagName(el, "cpu");
 		SvdCpu cpu = SvdCpu.fromElement(cpuElement);
 
+		// Try to parse a size element
+		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
+		Integer defaultSize = -1;
+		if (sizeElement != null)
+			defaultSize = Integer.decode(sizeElement.getTextContent());
+
 		// Parse peripherals info
 		Element peripheralsElement = Utils.getSingleFirstOrderChildElementByTagName(el, "peripherals");
 		List<SvdPeripheral> periphs = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(peripheralsElement, "peripheral"))
-			periphs.add(SvdPeripheral.fromElement(e));
+			periphs.add(SvdPeripheral.fromElement(e, defaultSize));
 
 		// Return the new SVD device
 		return new SvdDevice(cpu, periphs);
