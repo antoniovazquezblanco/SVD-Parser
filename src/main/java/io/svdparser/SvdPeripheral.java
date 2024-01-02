@@ -33,6 +33,7 @@ public class SvdPeripheral {
 	 * Create an SvdPeripheral from a DOM element.
 	 * 
 	 * @param el DOM element object.
+	 * @param defaultSize Default register size to inherit.
 	 * @return A SvdPeripheral peripheral object.
 	 * @throws SvdParserException on SVD format errors.
 	 */

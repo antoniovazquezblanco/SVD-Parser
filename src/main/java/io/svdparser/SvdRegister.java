@@ -31,6 +31,7 @@ public class SvdRegister {
 	 * Create an SvdRegister from a DOM element.
 	 * 
 	 * @param el DOM element object.
+	 * @param defaultSize Default register size to inherit.
 	 * @return A SvdRegister object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
