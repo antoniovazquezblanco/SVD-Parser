@@ -45,7 +45,7 @@ class SvdDeviceTest {
 	}
 
 	@Test
-	void testSample01() {
+	void testDefaultSize() {
 		try {
 			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/01_default_size.svd"));
 			List<SvdPeripheral> periphs = dev.getPeripherals();
