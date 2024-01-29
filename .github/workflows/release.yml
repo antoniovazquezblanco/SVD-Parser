@@ -35,7 +35,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Publish
-      uses: gradle/gradle-build-action@v2.11.1
+      uses: gradle/gradle-build-action@v2.12.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
