@@ -5,3 +5,10 @@
 
 
 A Java library to parse CMSIS SVD files.
+
+
+## Development
+
+Install Eclipse. Once in Eclipse click `File > Open Projects from File System...`. On the import dialog select `SVD-Parser` folder and import the project.
+
+You are ready for building, testing and developing.
