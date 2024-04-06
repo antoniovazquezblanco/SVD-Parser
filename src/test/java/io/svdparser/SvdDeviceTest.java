@@ -58,4 +58,19 @@ class SvdDeviceTest {
 			fail("Failed to parse sample file!");
 		}
 	}
+
+	@Test
+	void testRegisterNoDescription() {
+		try {
+			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/02_register_no_description.svd"));
+			List<SvdPeripheral> periphs = dev.getPeripherals();
+			assertNotEquals(periphs.size(), 0);
+			for (SvdPeripheral p : periphs) {
+				System.out.println(p.toString());
+			}
+		} catch (SAXException | IOException | ParserConfigurationException | SvdParserException e) {
+			e.printStackTrace();
+			fail("Failed to parse sample file!");
+		}
+	}
 }

@@ -30,7 +30,7 @@ public class SvdRegister {
 	/**
 	 * Create an SvdRegister from a DOM element.
 	 * 
-	 * @param el DOM element object.
+	 * @param el          DOM element object.
 	 * @param defaultSize Default register size to inherit.
 	 * @return A SvdRegister object.
 	 * @throws SvdParserException on SVD format errors.
@@ -42,7 +42,7 @@ public class SvdRegister {
 
 		// Get a description
 		Element descriptionElement = Utils.getSingleFirstOrderChildElementByTagName(el, "description");
-		String description = descriptionElement.getTextContent();
+		String description = (descriptionElement != null) ? descriptionElement.getTextContent() : null;
 
 		// Get the size
 		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
