@@ -19,58 +19,39 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.xml.sax.SAXException;
 
 class SvdDeviceTest {
 
-	@Test
-	void testSample() {
+	@ParameterizedTest
+	@MethodSource("testResourceProvider")
+	void testResourceFile(File f) {
 		try {
-			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/00_sample.svd"));
+			SvdDevice dev = SvdDevice.fromFile(f);
 			List<SvdPeripheral> periphs = dev.getPeripherals();
 			assertNotEquals(periphs.size(), 0);
-			for (SvdPeripheral p : periphs) {
-				System.out.println(p.toString());
-			}
 		} catch (SAXException | IOException | ParserConfigurationException | SvdParserException e) {
 			e.printStackTrace();
-			fail("Failed to parse sample file!");
+			fail(String.format("Failed to parse '%s' sample file!", f.getPath()));
 		}
 	}
 
-	@Test
-	void testDefaultSize() {
-		try {
-			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/01_default_size.svd"));
-			List<SvdPeripheral> periphs = dev.getPeripherals();
-			assertNotEquals(periphs.size(), 0);
-			for (SvdPeripheral p : periphs) {
-				System.out.println(p.toString());
+	static Stream<File> testResourceProvider() {
+		File resdir = new File("src/test/resources/");
+		File[] testFiles = resdir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".svd");
 			}
-		} catch (SAXException | IOException | ParserConfigurationException | SvdParserException e) {
-			e.printStackTrace();
-			fail("Failed to parse sample file!");
-		}
-	}
-
-	@Test
-	void testRegisterNoDescription() {
-		try {
-			SvdDevice dev = SvdDevice.fromFile(new File("src/test/resources/02_register_no_description.svd"));
-			List<SvdPeripheral> periphs = dev.getPeripherals();
-			assertNotEquals(periphs.size(), 0);
-			for (SvdPeripheral p : periphs) {
-				System.out.println(p.toString());
-			}
-		} catch (SAXException | IOException | ParserConfigurationException | SvdParserException e) {
-			e.printStackTrace();
-			fail("Failed to parse sample file!");
-		}
+		});
+		return Stream.of(testFiles);
 	}
 }
