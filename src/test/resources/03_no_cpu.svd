@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<device schemaVersion="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD_Schema_1_0.xsd" >
+  <name>TESTDEV</name>
+  <version>7944</version>
+  <description>Some Device</description>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+  <size>32</size>
+  <access>read-write</access>
+  <resetValue>0</resetValue>
+  <resetMask>0</resetMask>
+  <peripherals>
+    <peripheral>
+      <name>PERIPH0</name>
+      <description>Some periph</description>
+      <baseAddress>0x40000000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x00001000</size>
+        <usage>registers</usage>
+      </addressBlock>
+    </peripheral>
+  </peripherals>
+</device>

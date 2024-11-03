@@ -31,6 +31,8 @@ public class SvdCpu {
 	 * @throws SvdParserException when the element does not correspond to a CPU.
 	 */
 	public static SvdCpu fromElement(Element el) throws SvdParserException {
+		if (el == null)
+			return null;
 		if (!el.getNodeName().equals("cpu"))
 			throw new SvdParserException("Cannot build an SvdCpu from a " + el.getNodeName() + " node!");
 		return new SvdCpu();
