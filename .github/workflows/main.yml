@@ -28,6 +28,9 @@ jobs:
     - name: Build
       run: gradle printVersion build
 
+    - name: Test
+      run: gradle printVersion test
+
   release:
     needs: build
     runs-on: ubuntu-latest
