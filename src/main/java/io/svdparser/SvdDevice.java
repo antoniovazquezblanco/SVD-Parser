@@ -96,7 +96,7 @@ public class SvdDevice {
 		Element peripheralsElement = Utils.getSingleFirstOrderChildElementByTagName(el, "peripherals");
 		List<SvdPeripheral> periphs = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(peripheralsElement, "peripheral"))
-			periphs.add(SvdPeripheral.fromElement(e, defaultSize));
+			periphs.add(SvdPeripheral.fromElement(e, defaultSize, periphs));
 
 		// Return the new SVD device
 		return new SvdDevice(cpu, periphs);

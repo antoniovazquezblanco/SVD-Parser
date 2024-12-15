@@ -41,4 +41,13 @@ public class Utils {
 			throw new SvdParserException("More than one " + name + " element in " + parent.getNodeName() + "!");
 		return elements.get(0);
 	}
+
+	static SvdPeripheral getPeripheralFromName(List<SvdPeripheral> periphs, String name) {
+		if (periphs == null)
+			return null;
+		for (SvdPeripheral p : periphs)
+			if (p.getName().equals(name))
+				return p;
+		return null;
+	}
 }

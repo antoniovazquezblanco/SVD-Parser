@@ -32,12 +32,13 @@ public class SvdPeripheral {
 	/**
 	 * Create an SvdPeripheral from a DOM element.
 	 * 
-	 * @param el DOM element object.
+	 * @param el          DOM element object.
 	 * @param defaultSize Default register size to inherit.
 	 * @return A SvdPeripheral peripheral object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static SvdPeripheral fromElement(Element el, int defaultSize) throws SvdParserException {
+	public static SvdPeripheral fromElement(Element el, int defaultSize, List<SvdPeripheral> otherPeriphs)
+			throws SvdParserException {
 		// Element null check
 		if (el == null)
 			return null;
@@ -50,6 +51,16 @@ public class SvdPeripheral {
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
 		String name = nameElement.getTextContent();
 
+		// Check if the peripheral derives from any other...
+		SvdPeripheral derivedFrom = null;
+		String derivedFromName = el.getAttribute("derivedFrom");
+		if (derivedFromName != null && !derivedFromName.equals("")) {
+			derivedFrom = Utils.getPeripheralFromName(otherPeriphs, derivedFromName);
+			if (derivedFrom == null)
+				throw new SvdParserException(
+						"Cannot find peripheral " + derivedFromName + " to derive " + name + " from...");
+		}
+
 		// Get the base addr
 		Element baseAddrElement = Utils.getSingleFirstOrderChildElementByTagName(el, "baseAddress");
 		Long baseAddr = Long.decode(baseAddrElement.getTextContent());
@@ -58,7 +69,7 @@ public class SvdPeripheral {
 		List<SvdAddressBlock> addressBlocks = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
 			addressBlocks.add(SvdAddressBlock.fromElement(e));
-		
+
 		// Try to parse a size element
 		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
 		if (sizeElement != null)
@@ -71,14 +82,26 @@ public class SvdPeripheral {
 			for (Element e : Utils.getFirstOrderChildElementsByTagName(registersElement, "register"))
 				registers.add(SvdRegister.fromElement(e, defaultSize));
 
-		return new SvdPeripheral(name, baseAddr, addressBlocks, registers);
+		return new SvdPeripheral(derivedFrom, name, baseAddr, addressBlocks, registers);
 	}
 
-	private SvdPeripheral(String name, Long baseAddr, List<SvdAddressBlock> addressBlocks, List<SvdRegister> registers) {
+	private SvdPeripheral(String name, Long baseAddr, List<SvdAddressBlock> addressBlocks,
+			List<SvdRegister> registers) {
+		this(null, name, baseAddr, addressBlocks, registers);
+	}
+
+	private SvdPeripheral(SvdPeripheral derivedFrom, String name, Long baseAddr, List<SvdAddressBlock> addressBlocks,
+			List<SvdRegister> registers) {
 		mName = name;
 		mBaseAddr = baseAddr;
-		mAddressBlocks = addressBlocks;
-		mRegisters = registers;
+		mAddressBlocks = new ArrayList<SvdAddressBlock>();
+		mRegisters = new ArrayList<SvdRegister>();
+		if (derivedFrom != null) {
+			mAddressBlocks.addAll(derivedFrom.getAddressBlocks());
+			mRegisters.addAll(derivedFrom.getRegisters());
+		}
+		mAddressBlocks.addAll(addressBlocks);
+		mRegisters.addAll(registers);
 	}
 
 	/**
@@ -107,7 +130,7 @@ public class SvdPeripheral {
 	public List<SvdAddressBlock> getAddressBlocks() {
 		return mAddressBlocks;
 	}
-	
+
 	/**
 	 * Get a list of registers that the peripheral contains.
 	 * 
