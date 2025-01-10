@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD.xsd" >
+  <cpu></cpu>
+  <addressUnitBits>32</addressUnitBits>
+  <width>32</width>
+  <resetValue>0x00000000</resetValue>
+  <resetMask>0xFFFFFFFF</resetMask>
+  <peripherals>
+    <peripheral>
+      <name>DIMPERIPH</name>
+      <baseAddress>0x00000000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x100</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <dim>4</dim>
+          <dimIncrement>4</dimIncrement>
+          <name>DIMREG[%s]</name>
+          <addressOffset>0x50</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
+          <resetMask>0xFFFFFFFF</resetMask>
+        </register>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>
