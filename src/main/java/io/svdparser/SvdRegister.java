@@ -98,4 +98,8 @@ public class SvdRegister {
 	public Integer getOffset() {
 		return mOffset;
 	}
+
+	public String toString() {
+		return "SvdRegister{name=" + mName + "}";
+	}
 }

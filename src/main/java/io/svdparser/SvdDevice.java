@@ -124,4 +124,17 @@ public class SvdDevice {
 	public List<SvdPeripheral> getPeripherals() {
 		return mPeripherals;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SvdDevice{\n");
+		sb.append(" cpu=" + mCpu.toString() + ",\n");
+		sb.append(" periphs=[\n");
+		for (SvdPeripheral p : mPeripherals)
+			sb.append("  " + p.toString() + ",\n");
+		sb.append(" ]\n");
+		sb.append("}");
+		return sb.toString();
+	}
 }

@@ -36,9 +36,11 @@ class SvdDeviceTest {
 	@MethodSource("testResourceProvider")
 	void testResourceFile(File f) {
 		try {
+			System.out.println("Testing file "+f.toString());
 			SvdDevice dev = SvdDevice.fromFile(f);
 			List<SvdPeripheral> periphs = dev.getPeripherals();
 			assertNotEquals(periphs.size(), 0);
+			System.out.println(dev.toString());
 		} catch (SAXException | IOException | ParserConfigurationException | SvdParserException e) {
 			e.printStackTrace();
 			fail(String.format("Failed to parse '%s' sample file!", f.getPath()));

@@ -32,7 +32,7 @@ public class SvdCpu {
 	 */
 	public static SvdCpu fromElement(Element el) throws SvdParserException {
 		if (el == null)
-			return null;
+			return new SvdCpu();
 		if (!el.getNodeName().equals("cpu"))
 			throw new SvdParserException("Cannot build an SvdCpu from a " + el.getNodeName() + " node!");
 		return new SvdCpu();
@@ -40,5 +40,10 @@ public class SvdCpu {
 
 	private SvdCpu() {
 
+	}
+
+	@Override
+	public String toString() {
+		return "SvdCpu{}";
 	}
 }

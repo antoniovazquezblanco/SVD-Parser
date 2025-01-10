@@ -142,7 +142,15 @@ public class SvdPeripheral {
 	}
 
 	public String toString() {
-		return getClass().getName() + "@" + Integer.toHexString(hashCode()) + "[name=" + mName + ", baseAddr=0x"
-				+ Long.toHexString(mBaseAddr) + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("SvdPeripheral{");
+		sb.append("name=" + mName);
+		sb.append(", baseAddr=0x" + Long.toHexString(mBaseAddr));
+		sb.append(", regs=[");
+		for (SvdRegister r : mRegisters)
+			sb.append(r.toString()+",");
+		sb.append("]");
+		sb.append("}");
+		return sb.toString();
 	}
 }
