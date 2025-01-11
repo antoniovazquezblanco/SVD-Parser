@@ -15,6 +15,8 @@
  */
 package io.svdparser;
 
+import java.util.ArrayList;
+
 import org.w3c.dom.Element;
 
 /**
@@ -35,7 +37,7 @@ public class SvdRegister {
 	 * @return A SvdRegister object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static SvdRegister fromElement(Element el, Integer defaultSize) throws SvdParserException {
+	public static ArrayList<SvdRegister> fromElement(Element el, Integer defaultSize) throws SvdParserException {
 		// Element null check
 		if (el == null)
 			return null;
@@ -43,6 +45,13 @@ public class SvdRegister {
 		// XML node name check
 		if (!el.getNodeName().equals("register"))
 			throw new SvdParserException("Cannot build an SvdRegister from a " + el.getNodeName() + " node!");
+
+		// Parse dim elements
+		Element dimElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dim");
+		Integer dim = (dimElement != null) ? Integer.valueOf(dimElement.getTextContent()) : 1;
+		Element dimIncrementElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dimIncrement");
+		Integer dimIncrement = (dimIncrementElement != null) ? Integer.valueOf(dimIncrementElement.getTextContent())
+				: 0;
 
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
@@ -61,7 +70,13 @@ public class SvdRegister {
 		Element offsetElement = Utils.getSingleFirstOrderChildElementByTagName(el, "addressOffset");
 		Integer offset = Integer.decode(offsetElement.getTextContent());
 
-		return new SvdRegister(name, description, defaultSize, offset);
+		ArrayList<SvdRegister> regs = new ArrayList<SvdRegister>();
+		for (Integer i = 0; i < dim; i++) {
+			Integer addrIncrement = i * dimIncrement;
+			String regName = name.formatted(String.valueOf(i));
+			regs.add(new SvdRegister(regName, description, defaultSize, offset+addrIncrement));
+		}
+		return regs;
 	}
 
 	private SvdRegister(String name, String description, int size, int offset) {

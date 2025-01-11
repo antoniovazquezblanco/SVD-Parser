@@ -38,7 +38,7 @@ public class SvdPeripheral {
 	 * @return A SvdPeripheral peripheral object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static SvdPeripheral fromElement(Element el, int defaultSize, List<SvdPeripheral> otherPeriphs)
+	public static ArrayList<SvdPeripheral> fromElement(Element el, int defaultSize, List<SvdPeripheral> otherPeriphs)
 			throws SvdParserException {
 		// Element null check
 		if (el == null)
@@ -47,6 +47,13 @@ public class SvdPeripheral {
 		// XML node name check
 		if (!el.getNodeName().equals("peripheral"))
 			throw new SvdParserException("Cannot build an SvdPeripheral from a " + el.getNodeName() + " node!");
+
+		// Parse dim elements
+		Element dimElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dim");
+		Integer dim = (dimElement != null) ? Integer.valueOf(dimElement.getTextContent()) : 1;
+		Element dimIncrementElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dimIncrement");
+		Integer dimIncrement = (dimIncrementElement != null) ? Integer.valueOf(dimIncrementElement.getTextContent())
+				: 0;
 
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
@@ -81,9 +88,15 @@ public class SvdPeripheral {
 		Element registersElement = Utils.getSingleFirstOrderChildElementByTagName(el, "registers");
 		if (registersElement != null)
 			for (Element e : Utils.getFirstOrderChildElementsByTagName(registersElement, "register"))
-				registers.add(SvdRegister.fromElement(e, defaultSize));
+				registers.addAll(SvdRegister.fromElement(e, defaultSize));
 
-		return new SvdPeripheral(derivedFrom, name, baseAddr, addressBlocks, registers);
+		ArrayList<SvdPeripheral> periph = new ArrayList<SvdPeripheral>();
+		for (Integer i = 0; i < dim; i++) {
+			Integer addrIncrement = i * dimIncrement;
+			String periphName = name.formatted(String.valueOf(i));
+			periph.add(new SvdPeripheral(derivedFrom, periphName, baseAddr + addrIncrement, addressBlocks, registers));
+		}
+		return periph;
 	}
 
 	private SvdPeripheral(String name, Long baseAddr, List<SvdAddressBlock> addressBlocks,
@@ -148,7 +161,7 @@ public class SvdPeripheral {
 		sb.append(", baseAddr=0x" + Long.toHexString(mBaseAddr));
 		sb.append(", regs=[");
 		for (SvdRegister r : mRegisters)
-			sb.append(r.toString()+",");
+			sb.append(r.toString() + ",");
 		sb.append("]");
 		sb.append("}");
 		return sb.toString();
