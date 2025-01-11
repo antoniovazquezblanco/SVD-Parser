@@ -36,6 +36,14 @@ public class SvdRegister {
 	 * @throws SvdParserException on SVD format errors.
 	 */
 	public static SvdRegister fromElement(Element el, Integer defaultSize) throws SvdParserException {
+		// Element null check
+		if (el == null)
+			return null;
+
+		// XML node name check
+		if (!el.getNodeName().equals("register"))
+			throw new SvdParserException("Cannot build an SvdRegister from a " + el.getNodeName() + " node!");
+
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
 		String name = nameElement.getTextContent();
