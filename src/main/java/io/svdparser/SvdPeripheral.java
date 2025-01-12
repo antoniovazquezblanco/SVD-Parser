@@ -50,10 +50,9 @@ public class SvdPeripheral {
 
 		// Parse dim elements
 		Element dimElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dim");
-		Integer dim = (dimElement != null) ? Integer.valueOf(dimElement.getTextContent()) : 1;
+		Integer dim = (dimElement != null) ? Integer.decode(dimElement.getTextContent()) : 1;
 		Element dimIncrementElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dimIncrement");
-		Integer dimIncrement = (dimIncrementElement != null) ? Integer.valueOf(dimIncrementElement.getTextContent())
-				: 0;
+		Integer dimIncrement = (dimIncrementElement != null) ? Integer.decode(dimIncrementElement.getTextContent()) : 0;
 
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");

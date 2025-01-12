@@ -48,10 +48,9 @@ public class SvdRegister {
 
 		// Parse dim elements
 		Element dimElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dim");
-		Integer dim = (dimElement != null) ? Integer.valueOf(dimElement.getTextContent()) : 1;
+		Integer dim = (dimElement != null) ? Integer.decode(dimElement.getTextContent()) : 1;
 		Element dimIncrementElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dimIncrement");
-		Integer dimIncrement = (dimIncrementElement != null) ? Integer.valueOf(dimIncrementElement.getTextContent())
-				: 0;
+		Integer dimIncrement = (dimIncrementElement != null) ? Integer.decode(dimIncrementElement.getTextContent()) : 0;
 
 		// Get a name
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
@@ -74,7 +73,7 @@ public class SvdRegister {
 		for (Integer i = 0; i < dim; i++) {
 			Integer addrIncrement = i * dimIncrement;
 			String regName = name.formatted(String.valueOf(i));
-			regs.add(new SvdRegister(regName, description, defaultSize, offset+addrIncrement));
+			regs.add(new SvdRegister(regName, description, defaultSize, offset + addrIncrement));
 		}
 		return regs;
 	}
