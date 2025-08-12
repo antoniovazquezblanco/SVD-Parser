@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Clone Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -47,7 +47,7 @@ jobs:
     if: contains(github.ref, 'refs/tags/v')
     steps:
     - name: Clone Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
