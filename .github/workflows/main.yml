@@ -37,7 +37,7 @@ jobs:
     if: contains(github.ref, 'refs/tags/v')
     steps:
     - name: Create a release
-      uses: ncipollo/release-action@v1.18.0
+      uses: ncipollo/release-action@v1.19.1
       with:
         allowUpdates: true
 
