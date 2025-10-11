@@ -1,7 +1,7 @@
 plugins {
     id 'signing'
     id 'java-library'
-    id 'maven-publish'
+    id 'com.vanniktech.maven.publish' version '0.34.0'
     id 'com.palantir.git-version' version '4.0.0'
 }
 
@@ -9,7 +9,7 @@ group = 'io.github.antoniovazquezblanco'
 version gitVersion()
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
@@ -17,14 +17,9 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
 test {
     useJUnitPlatform()
-    
+
     // Always run tests, even when nothing changed.
     dependsOn 'cleanTest'
 
@@ -34,56 +29,31 @@ test {
     }
 }
 
-signing {
-    useInMemoryPgpKeys(System.getenv("OSSRH_GPG_SECRET_KEY"), System.getenv("OSSRH_GPG_SECRET_KEY_PASSWORD"))
-    sign publishing.publications
-}
-
-publishing {
-	publications {
-        svdparser(MavenPublication) {
-            from components.java
-            pom {
-                name = 'SVD Parser'
-                description = ' A Java library to parse CMSIS SVD files.'
-                url = 'https://github.com/antoniovazquezblanco/SVD-Parser'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'antoniovazquezblanco'
-                        name = 'Antonio Vázquez Blanco'
-                        email = 'antoniovazquezblanco@gmail.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:https://github.com/antoniovazquezblanco/SVD-Parser.git'
-                    developerConnection = 'scm:git:git@github.com:antoniovazquezblanco/SVD-Parser.git'
-                    url = 'https://github.com/antoniovazquezblanco/SVD-Parser'
-                }
+mavenPublishing {
+    coordinates(project.group, "svd-parser", project.version)
+    pom {
+        name = 'SVD Parser'
+        description = 'A Java library to parse CMSIS SVD files.'
+        url = 'https://github.com/antoniovazquezblanco/SVD-Parser'
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
             }
         }
+        developers {
+            developer {
+                id = 'antoniovazquezblanco'
+                name = 'Antonio Vázquez Blanco'
+                email = 'antoniovazquezblanco@gmail.com'
+            }
+        }
+        scm {
+            connection = 'scm:git:https://github.com/antoniovazquezblanco/SVD-Parser.git'
+            developerConnection = 'scm:git:git@github.com:antoniovazquezblanco/SVD-Parser.git'
+            url = 'https://github.com/antoniovazquezblanco/SVD-Parser'
+        }
     }
-	repositories {
-		maven {
-			name = "OSSRH"
-			url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-			credentials {
-				username = System.getenv("OSSRH_USERNAME")
-				password = System.getenv("OSSRH_PASSWORD")
-		    }
-		}
-		maven {
-			name = "GitHub"
-			url = "https://maven.pkg.github.com/antoniovazquezblanco/SVD-Parser"
-			credentials {
-				username = System.getenv("GITHUB_ACTOR")
-				password = System.getenv("GITHUB_TOKEN")
-			}
-		}
-	}
+    signAllPublications()
+    publishToMavenCentral()
 }
