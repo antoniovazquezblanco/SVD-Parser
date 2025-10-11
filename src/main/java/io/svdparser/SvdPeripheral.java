@@ -25,6 +25,9 @@ import org.w3c.dom.Element;
  */
 public class SvdPeripheral {
 	private String mName;
+	private String mVersion;
+	private String mDescription;
+	private String mGroupName;
 	private Long mBaseAddr;
 	private List<SvdAddressBlock> mAddressBlocks;
 	private List<SvdRegister> mRegisters;
@@ -48,13 +51,8 @@ public class SvdPeripheral {
 		if (!el.getNodeName().equals("peripheral"))
 			throw new SvdParserException("Cannot build an SvdPeripheral from a " + el.getNodeName() + " node!");
 
-		// Parse dim elements
-		Element dimElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dim");
-		Integer dim = (dimElement != null) ? Integer.decode(dimElement.getTextContent()) : 1;
-		Element dimIncrementElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dimIncrement");
-		Integer dimIncrement = (dimIncrementElement != null) ? Integer.decode(dimIncrementElement.getTextContent()) : 0;
-
-		// Get a name
+		// Get a name. The name is parsed first to be able to provide better error msg
+		// on derivedFrom parsing...
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
 		String name = nameElement.getTextContent();
 
@@ -68,19 +66,43 @@ public class SvdPeripheral {
 						"Cannot find peripheral " + derivedFromName + " to derive " + name + " from...");
 		}
 
+		// Parse dim elements
+		Element dimElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dim");
+		Integer dim = (dimElement != null) ? Integer.decode(dimElement.getTextContent()) : 1;
+		Element dimIncrementElement = Utils.getSingleFirstOrderChildElementByTagName(el, "dimIncrement");
+		Integer dimIncrement = (dimIncrementElement != null) ? Integer.decode(dimIncrementElement.getTextContent()) : 0;
+
+		// Get version
+		String version = null;
+		Element versionElement = Utils.getSingleFirstOrderChildElementByTagName(el, "version");
+		if (versionElement != null)
+			version = versionElement.getTextContent();
+
+		// Get description
+		String description = null;
+		Element descriptionElement = Utils.getSingleFirstOrderChildElementByTagName(el, "description");
+		if (descriptionElement != null)
+			description = descriptionElement.getTextContent();
+
+		// Get group name
+		String groupName = null;
+		Element groupNameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "groupName");
+		if (groupNameElement != null)
+			groupName = groupNameElement.getTextContent();
+
 		// Get the base addr
 		Element baseAddrElement = Utils.getSingleFirstOrderChildElementByTagName(el, "baseAddress");
 		Long baseAddr = Long.decode(baseAddrElement.getTextContent());
-
-		// Parse address blocks
-		List<SvdAddressBlock> addressBlocks = new ArrayList<>();
-		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
-			addressBlocks.add(SvdAddressBlock.fromElement(e));
 
 		// Try to parse a size element
 		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
 		if (sizeElement != null)
 			defaultSize = Integer.decode(sizeElement.getTextContent());
+
+		// Parse address blocks
+		List<SvdAddressBlock> addressBlocks = new ArrayList<>();
+		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
+			addressBlocks.add(SvdAddressBlock.fromElement(e));
 
 		// Parse registers
 		List<SvdRegister> registers = new ArrayList<>();
@@ -93,23 +115,25 @@ public class SvdPeripheral {
 		for (Integer i = 0; i < dim; i++) {
 			Integer addrIncrement = i * dimIncrement;
 			String periphName = name.formatted(String.valueOf(i));
-			periph.add(new SvdPeripheral(derivedFrom, periphName, baseAddr + addrIncrement, addressBlocks, registers));
+			periph.add(new SvdPeripheral(derivedFrom, periphName, version, description, groupName,
+					baseAddr + addrIncrement, addressBlocks, registers));
 		}
 		return periph;
 	}
 
-	private SvdPeripheral(String name, Long baseAddr, List<SvdAddressBlock> addressBlocks,
-			List<SvdRegister> registers) {
-		this(null, name, baseAddr, addressBlocks, registers);
-	}
-
-	private SvdPeripheral(SvdPeripheral derivedFrom, String name, Long baseAddr, List<SvdAddressBlock> addressBlocks,
-			List<SvdRegister> registers) {
+	private SvdPeripheral(SvdPeripheral derivedFrom, String name, String version, String description, String groupName,
+			Long baseAddr, List<SvdAddressBlock> addressBlocks, List<SvdRegister> registers) {
 		mName = name;
+		mVersion = version;
+		mDescription = description;
+		mGroupName = groupName;
 		mBaseAddr = baseAddr;
 		mAddressBlocks = new ArrayList<SvdAddressBlock>();
 		mRegisters = new ArrayList<SvdRegister>();
 		if (derivedFrom != null) {
+			mVersion = (mVersion != null) ? mVersion : derivedFrom.getVersion();
+			mDescription = (mDescription != null) ? mDescription : derivedFrom.getDescription();
+			mGroupName = (mGroupName != null) ? mGroupName : derivedFrom.getGroupName();
 			mAddressBlocks.addAll(derivedFrom.getAddressBlocks());
 			mRegisters.addAll(derivedFrom.getRegisters());
 		}
@@ -127,8 +151,35 @@ public class SvdPeripheral {
 	}
 
 	/**
+	 * Get the peripheral version.
+	 *
+	 * @return The peripheral version.
+	 */
+	public String getVersion() {
+		return mVersion;
+	}
+
+	/**
+	 * Get the peripheral description.
+	 *
+	 * @return The peripheral description.
+	 */
+	public String getDescription() {
+		return mDescription;
+	}
+
+	/**
+	 * Get the peripheral group name.
+	 *
+	 * @return The peripheral group name.
+	 */
+	public String getGroupName() {
+		return mGroupName;
+	}
+
+	/**
 	 * Get the peripheral base address.
-	 * 
+	 *
 	 * @return The base address of the peripheral.
 	 */
 	public Long getBaseAddr() {
@@ -156,7 +207,13 @@ public class SvdPeripheral {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SvdPeripheral{");
-		sb.append("name=" + mName);
+		sb.append("name=\"" + mName + "\"");
+		if (mVersion != null)
+			sb.append(", version=\"" + mVersion + "\"");
+		if (mDescription != null)
+			sb.append(", description=\"" + mDescription + "\"");
+		if (mGroupName != null)
+			sb.append(", groupName=\"" + mGroupName + "\"");
 		sb.append(", baseAddr=0x" + Long.toHexString(mBaseAddr));
 		sb.append(", regs=[");
 		for (SvdRegister r : mRegisters)
