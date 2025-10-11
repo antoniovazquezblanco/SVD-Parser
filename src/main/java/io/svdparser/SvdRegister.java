@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Antonio Vázquez Blanco 2023
+ * Copyright (C) Antonio Vázquez Blanco 2023-2025
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.svdparser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -23,11 +24,11 @@ import org.w3c.dom.Element;
  * This class represents a register of a device peripheral.
  */
 public class SvdRegister {
-
 	private String mName;
 	private String mDescription;
 	private Integer mSize;
 	private Integer mOffset;
+	private List<SvdField> mFields;
 
 	/**
 	 * Create an SvdRegister from a DOM element.
@@ -69,20 +70,30 @@ public class SvdRegister {
 		Element offsetElement = Utils.getSingleFirstOrderChildElementByTagName(el, "addressOffset");
 		Integer offset = Integer.decode(offsetElement.getTextContent());
 
+		// Parse fields
+		List<SvdField> fields = new ArrayList<SvdField>();
+		Element fieldsElement = Utils.getSingleFirstOrderChildElementByTagName(el, "fields");
+		if (fieldsElement != null) {
+			for (Element e : Utils.getFirstOrderChildElementsByTagName(fieldsElement, "field")) {
+				fields.add(SvdField.fromElement(e));
+			}
+		}
+
 		ArrayList<SvdRegister> regs = new ArrayList<SvdRegister>();
 		for (Integer i = 0; i < dim; i++) {
 			Integer addrIncrement = i * dimIncrement;
 			String regName = name.formatted(String.valueOf(i));
-			regs.add(new SvdRegister(regName, description, defaultSize, offset + addrIncrement));
+			regs.add(new SvdRegister(regName, description, defaultSize, offset + addrIncrement, fields));
 		}
 		return regs;
 	}
 
-	private SvdRegister(String name, String description, int size, int offset) {
+	private SvdRegister(String name, String description, int size, int offset, List<SvdField> fields) {
 		mName = name;
 		mDescription = description;
 		mSize = size;
 		mOffset = offset;
+		mFields = fields;
 	}
 
 	/**
@@ -114,14 +125,39 @@ public class SvdRegister {
 
 	/**
 	 * Get the register offset.
-	 * 
+	 *
 	 * @return The offset of the register.
 	 */
 	public Integer getOffset() {
 		return mOffset;
 	}
 
+	/**
+	 * Get the fields in this register.
+	 *
+	 * @return List of fields.
+	 */
+	public List<SvdField> getFields() {
+		return mFields;
+	}
+
 	public String toString() {
-		return "SvdRegister{name=" + mName + "}";
+		StringBuilder sb = new StringBuilder();
+		sb.append("SvdRegister{name=\"" + mName + "\"");
+		if (mDescription != null)
+			sb.append(", description=\"" + mDescription + "\"");
+		if (mSize != null)
+			sb.append(", size=" + mSize);
+		if (mOffset != null)
+			sb.append(", offset=0x" + Integer.toHexString(mOffset));
+		if (mFields != null && !mFields.isEmpty()) {
+			sb.append(", fields=[");
+			for (SvdField f : mFields) {
+				sb.append(f.toString() + ", ");
+			}
+			sb.append("]");
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 }
