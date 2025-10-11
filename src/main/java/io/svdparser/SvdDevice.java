@@ -35,8 +35,16 @@ import org.xml.sax.SAXException;
  * more peripherals, but one CPU description.
  */
 public class SvdDevice {
-
+	private String mVendor;
+	private String mVendorID;
+	private String mName;
+	private String mSeries;
+	private String mVersion;
+	private String mDescription;
+	private String mLicenseText;
 	private SvdCpu mCpu;
+	private Integer mAddressUnitBits;
+	private Integer mWidth;
 	private List<SvdPeripheral> mPeripherals;
 
 	/**
@@ -82,9 +90,55 @@ public class SvdDevice {
 		if (!el.getNodeName().equals("device"))
 			throw new SvdParserException("Cannot build an SvdDevice from a " + el.getNodeName() + " node!");
 
+		// Parse device info
+		String vendor = null;
+		Element vendorElement = Utils.getSingleFirstOrderChildElementByTagName(el, "vendor");
+		if (vendorElement != null)
+			vendor = vendorElement.getTextContent();
+
+		String vendorID = null;
+		Element vendorIDElement = Utils.getSingleFirstOrderChildElementByTagName(el, "vendorID");
+		if (vendorIDElement != null)
+			vendorID = vendorIDElement.getTextContent();
+
+		String name = null;
+		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
+		if (nameElement != null)
+			name = nameElement.getTextContent();
+
+		String series = null;
+		Element seriesElement = Utils.getSingleFirstOrderChildElementByTagName(el, "series");
+		if (seriesElement != null)
+			series = seriesElement.getTextContent();
+
+		String version = null;
+		Element versionElement = Utils.getSingleFirstOrderChildElementByTagName(el, "version");
+		if (versionElement != null)
+			version = versionElement.getTextContent();
+
+		String description = null;
+		Element descriptionElement = Utils.getSingleFirstOrderChildElementByTagName(el, "description");
+		if (descriptionElement != null)
+			description = descriptionElement.getTextContent();
+
+		String licenseText = null;
+		Element licenseTextElement = Utils.getSingleFirstOrderChildElementByTagName(el, "licenseText");
+		if (licenseTextElement != null)
+			licenseText = licenseTextElement.getTextContent();
+
 		// Parse CPU info
 		Element cpuElement = Utils.getSingleFirstOrderChildElementByTagName(el, "cpu");
 		SvdCpu cpu = SvdCpu.fromElement(cpuElement);
+
+		Integer addressUnitBits = null;
+		Element addressUnitBitsElement = Utils.getSingleFirstOrderChildElementByTagName(el, "addressUnitBits");
+		if (addressUnitBitsElement != null)
+			addressUnitBits = Integer.decode(addressUnitBitsElement.getTextContent());
+
+		Integer width = null;
+		Element widthElement = Utils.getSingleFirstOrderChildElementByTagName(el, "width");
+		if (widthElement != null)
+			width = Integer.decode(widthElement.getTextContent());
 
 		// Try to parse a size element
 		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
@@ -99,12 +153,86 @@ public class SvdDevice {
 			periphs.addAll(SvdPeripheral.fromElement(e, defaultSize, periphs));
 
 		// Return the new SVD device
-		return new SvdDevice(cpu, periphs);
+		return new SvdDevice(vendor, vendorID, name, series, version, description, licenseText, addressUnitBits, width,
+				cpu, periphs);
 	}
 
-	private SvdDevice(SvdCpu cpu, List<SvdPeripheral> periphs) {
+	private SvdDevice(String vendor, String vendorID, String name, String series, String version, String description,
+			String licenseText, Integer addressUnitBits, Integer width, SvdCpu cpu, List<SvdPeripheral> periphs) {
+		mVendor = vendor;
+		mVendorID = vendorID;
+		mName = name;
+		mSeries = series;
+		mVersion = version;
+		mDescription = description;
+		mLicenseText = licenseText;
+		mAddressUnitBits = addressUnitBits;
+		mWidth = width;
 		mCpu = cpu;
 		mPeripherals = periphs;
+	}
+
+	/**
+	 * Get the vendor name.
+	 *
+	 * @return The vendor name.
+	 */
+	public String getVendor() {
+		return mVendor;
+	}
+
+	/**
+	 * Get the vendor ID.
+	 *
+	 * @return The vendor ID.
+	 */
+	public String getVendorID() {
+		return mVendorID;
+	}
+
+	/**
+	 * Get the device name.
+	 *
+	 * @return The device name.
+	 */
+	public String getName() {
+		return mName;
+	}
+
+	/**
+	 * Get the device series.
+	 *
+	 * @return The device series.
+	 */
+	public String getSeries() {
+		return mSeries;
+	}
+
+	/**
+	 * Get the device version.
+	 *
+	 * @return The device version.
+	 */
+	public String getVersion() {
+		return mVersion;
+	}
+
+	/**
+	 * Get the device description.
+	 *
+	 * @return The device description.
+	 */
+	public String getDescription() {
+		return mDescription;
+	}
+
+	/**
+	 * Get the license text.
+	 *
+	 * @return The license text.
+	 */
+	public String getLicenseText() {
+		return mLicenseText;
 	}
 
 	/**
@@ -117,8 +245,26 @@ public class SvdDevice {
 	}
 
 	/**
+	 * Get the address unit bits.
+	 *
+	 * @return The address unit bits.
+	 */
+	public Integer getAddressUnitBits() {
+		return mAddressUnitBits;
+	}
+
+	/**
+	 * Get the bus width.
+	 *
+	 * @return The bus width.
+	 */
+	public Integer getWidth() {
+		return mWidth;
+	}
+
+	/**
 	 * Get the peripheral list of the device.
-	 * 
+	 *
 	 * @return A list of SvdPeripheral objects.
 	 */
 	public List<SvdPeripheral> getPeripherals() {
@@ -129,6 +275,24 @@ public class SvdDevice {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SvdDevice{\n");
+		if (mVendor != null)
+			sb.append(" vendor=\"" + mVendor + "\",\n");
+		if (mVendorID != null)
+			sb.append(" vendorID=\"" + mVendorID + "\",\n");
+		if (mName != null)
+			sb.append(" name=\"" + mName + "\",\n");
+		if (mSeries != null)
+			sb.append(" series=\"" + mSeries + "\",\n");
+		if (mVersion != null)
+			sb.append(" version=\"" + mVersion + "\",\n");
+		if (mDescription != null)
+			sb.append(" description=\"" + mDescription + "\",\n");
+		if (mLicenseText != null)
+			sb.append(" licenseText=\"" + mLicenseText + "\",\n");
+		if (mAddressUnitBits != null)
+			sb.append(" addressUnitBits=" + mAddressUnitBits + ",\n");
+		if (mWidth != null)
+			sb.append(" width=" + mWidth + ",\n");
 		sb.append(" cpu=" + mCpu.toString() + ",\n");
 		sb.append(" periphs=[\n");
 		for (SvdPeripheral p : mPeripherals)
