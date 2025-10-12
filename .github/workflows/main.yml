@@ -1,4 +1,6 @@
 name: Build
+permissions:
+  contents: read
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -30,6 +32,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: contains(github.ref, 'refs/tags/v')
     steps:
     - name: Create a release
