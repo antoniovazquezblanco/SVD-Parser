@@ -2,7 +2,7 @@ plugins {
     id 'signing'
     id 'java-library'
     id 'com.vanniktech.maven.publish' version '0.34.0'
-    id 'com.palantir.git-version' version '4.0.0'
+    id 'com.palantir.git-version' version '4.1.0'
 }
 
 group = 'io.github.antoniovazquezblanco'
