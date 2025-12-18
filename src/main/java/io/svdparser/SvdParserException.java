@@ -13,6 +13,7 @@ public class SvdParserException extends RuntimeException {
 
 	/**
 	 * Create an SvdParserException from an error message.
+	 *
 	 * @param string Error message.
 	 */
 	public SvdParserException(String string) {
