@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance">
+  <name>AlternateRegisterTest</name>
+  <version>1.0</version>
+  <description>Test device for the alternateRegister tag identifying overlapping registers</description>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+  <peripherals>
+    <peripheral>
+      <name>FLASH</name>
+      <description>Flash controller peripheral</description>
+      <baseAddress>0x40024000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x100</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>ERASEPAGE</name>
+          <description>Register for erasing a page in code region 0</description>
+          <addressOffset>0x8</addressOffset>
+          <size>32</size>
+        </register>
+        <register>
+          <name>ERASEPCR0</name>
+          <description>Alias for ERASEPAGE (alternate register at same offset)</description>
+          <addressOffset>0x8</addressOffset>
+          <size>32</size>
+          <alternateRegister>ERASEPAGE</alternateRegister>
+        </register>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>

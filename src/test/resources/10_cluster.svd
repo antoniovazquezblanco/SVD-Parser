@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance">
+  <name>ClusterTest</name>
+  <version>1.0</version>
+  <description>Test device for the cluster tag grouping registers inside a peripheral</description>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+  <peripherals>
+    <peripheral>
+      <name>PERIPH0</name>
+      <description>Test peripheral with a cluster</description>
+      <baseAddress>0x40000000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x200</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>CTRL</name>
+          <description>Control register</description>
+          <addressOffset>0x0</addressOffset>
+          <size>32</size>
+        </register>
+        <cluster>
+          <name>CH</name>
+          <description>Channel configuration cluster</description>
+          <addressOffset>0x100</addressOffset>
+          <register>
+            <name>CONFIG</name>
+            <description>Channel configuration register</description>
+            <addressOffset>0x0</addressOffset>
+            <size>32</size>
+          </register>
+          <register>
+            <name>STATUS</name>
+            <description>Channel status register</description>
+            <addressOffset>0x4</addressOffset>
+            <size>32</size>
+            <access>read-only</access>
+          </register>
+        </cluster>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>

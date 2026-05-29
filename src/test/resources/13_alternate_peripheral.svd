@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance">
+  <name>AlternatePeripheralTest</name>
+  <version>1.0</version>
+  <description>Test device for the alternatePeripheral tag identifying overlapping peripherals</description>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+  <peripherals>
+    <peripheral>
+      <name>TIMER0</name>
+      <description>Timer 0 peripheral</description>
+      <baseAddress>0x40010000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x100</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>CR</name>
+          <description>Control register</description>
+          <addressOffset>0x0</addressOffset>
+          <size>32</size>
+        </register>
+      </registers>
+    </peripheral>
+    <peripheral>
+      <name>COUNTER0</name>
+      <description>Counter 0, mapped at the same address as TIMER0</description>
+      <baseAddress>0x40010000</baseAddress>
+      <alternatePeripheral>TIMER0</alternatePeripheral>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x100</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>CNT</name>
+          <description>Counter register</description>
+          <addressOffset>0x4</addressOffset>
+          <size>32</size>
+        </register>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>
