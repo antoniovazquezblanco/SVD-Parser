@@ -4,6 +4,8 @@
  */
 package io.svdparser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ public class SvdField {
 	private Integer mBitOffset;
 	private Integer mBitWidth;
 	private SvdAccess mAccess;
+	private List<SvdEnumeratedValue> mEnumeratedValues;
 
 	/**
 	 * Create an SvdField from a DOM element.
@@ -95,15 +98,26 @@ public class SvdField {
 		if (accessElement != null)
 			access = SvdAccess.fromString(accessElement.getTextContent());
 
-		return new SvdField(name, description, bitOffset, bitWidth, access);
+		// Parse enumeratedValues
+		List<SvdEnumeratedValue> enumeratedValues = null;
+		Element enumeratedValuesElement = Utils.getSingleFirstOrderChildElementByTagName(el, "enumeratedValues");
+		if (enumeratedValuesElement != null) {
+			enumeratedValues = new ArrayList<>();
+			for (Element enumeratedValueElement : Utils.getFirstOrderChildElementsByTagName(enumeratedValuesElement,
+					"enumeratedValue"))
+				enumeratedValues.add(SvdEnumeratedValue.fromElement(enumeratedValueElement));
+		}
+		return new SvdField(name, description, bitOffset, bitWidth, access, enumeratedValues);
 	}
 
-	private SvdField(String name, String description, Integer bitOffset, Integer bitWidth, SvdAccess access) {
+	private SvdField(String name, String description, Integer bitOffset, Integer bitWidth, SvdAccess access,
+			List<SvdEnumeratedValue> enumeratedValues) {
 		mName = name;
 		mDescription = description;
 		mBitOffset = bitOffset;
 		mBitWidth = bitWidth;
 		mAccess = access;
+		mEnumeratedValues = enumeratedValues;
 	}
 
 	/**
@@ -184,6 +198,15 @@ public class SvdField {
 		return mAccess;
 	}
 
+	/**
+	 * Get the list of enumerated values for this field.
+	 *
+	 * @return A list of SvdEnumeratedValue objects, empty if none are defined.
+	 */
+	public List<SvdEnumeratedValue> getEnumeratedValues() {
+		return mEnumeratedValues;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SvdField{name=\"" + mName + "\"");
@@ -196,6 +219,12 @@ public class SvdField {
 		}
 		if (mAccess != null)
 			sb.append(", access=\"" + mAccess.getSvdValue() + "\"");
+		if (mEnumeratedValues != null && !mEnumeratedValues.isEmpty()) {
+			sb.append(", enumeratedValues=[");
+			for (SvdEnumeratedValue ev : mEnumeratedValues)
+				sb.append(ev.toString() + ",");
+			sb.append("]");
+		}
 		sb.append("}");
 		return sb.toString();
 	}
