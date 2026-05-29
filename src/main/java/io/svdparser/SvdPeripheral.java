@@ -19,6 +19,7 @@ public class SvdPeripheral {
 	private String mGroupName;
 	private Long mBaseAddr;
 	private List<SvdAddressBlock> mAddressBlocks;
+	private List<SvdInterrupt> mInterrupts;
 	private List<SvdRegister> mRegisters;
 
 	/**
@@ -93,6 +94,11 @@ public class SvdPeripheral {
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
 			addressBlocks.add(SvdAddressBlock.fromElement(e));
 
+		// Parse interrupts
+		List<SvdInterrupt> interrupts = new ArrayList<>();
+		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "interrupt"))
+			interrupts.add(SvdInterrupt.fromElement(e));
+
 		// Parse registers
 		List<SvdRegister> registers = new ArrayList<>();
 		Element registersElement = Utils.getSingleFirstOrderChildElementByTagName(el, "registers");
@@ -105,28 +111,32 @@ public class SvdPeripheral {
 			Integer addrIncrement = i * dimIncrement;
 			String periphName = name.formatted(String.valueOf(i));
 			periph.add(new SvdPeripheral(derivedFrom, periphName, version, description, groupName,
-					baseAddr + addrIncrement, addressBlocks, registers));
+					baseAddr + addrIncrement, addressBlocks, interrupts, registers));
 		}
 		return periph;
 	}
 
 	private SvdPeripheral(SvdPeripheral derivedFrom, String name, String version, String description, String groupName,
-			Long baseAddr, List<SvdAddressBlock> addressBlocks, List<SvdRegister> registers) {
+			Long baseAddr, List<SvdAddressBlock> addressBlocks, List<SvdInterrupt> interrupts,
+			List<SvdRegister> registers) {
 		mName = name;
 		mVersion = version;
 		mDescription = description;
 		mGroupName = groupName;
 		mBaseAddr = baseAddr;
 		mAddressBlocks = new ArrayList<SvdAddressBlock>();
+		mInterrupts = new ArrayList<SvdInterrupt>();
 		mRegisters = new ArrayList<SvdRegister>();
 		if (derivedFrom != null) {
 			mVersion = (mVersion != null) ? mVersion : derivedFrom.getVersion();
 			mDescription = (mDescription != null) ? mDescription : derivedFrom.getDescription();
 			mGroupName = (mGroupName != null) ? mGroupName : derivedFrom.getGroupName();
 			mAddressBlocks.addAll(derivedFrom.getAddressBlocks());
+			mInterrupts.addAll(derivedFrom.getInterrupts());
 			mRegisters.addAll(derivedFrom.getRegisters());
 		}
 		mAddressBlocks.addAll(addressBlocks);
+		mInterrupts.addAll(interrupts);
 		mRegisters.addAll(registers);
 	}
 
@@ -185,6 +195,15 @@ public class SvdPeripheral {
 	}
 
 	/**
+	 * Get the list of interrupts associated with this peripheral.
+	 *
+	 * @return A list of SvdInterrupt objects, empty if none are defined.
+	 */
+	public List<SvdInterrupt> getInterrupts() {
+		return mInterrupts;
+	}
+
+	/**
 	 * Get a list of registers that the peripheral contains.
 	 * 
 	 * @return A list of SvdRegister objects.
@@ -204,6 +223,12 @@ public class SvdPeripheral {
 		if (mGroupName != null)
 			sb.append(", groupName=\"" + mGroupName + "\"");
 		sb.append(", baseAddr=0x" + Long.toHexString(mBaseAddr));
+		if (mInterrupts != null && !mInterrupts.isEmpty()) {
+			sb.append(", interrupts=[");
+			for (SvdInterrupt irq : mInterrupts)
+				sb.append(irq.toString() + ",");
+			sb.append("]");
+		}
 		sb.append(", regs=[");
 		for (SvdRegister r : mRegisters)
 			sb.append(r.toString() + ",");
