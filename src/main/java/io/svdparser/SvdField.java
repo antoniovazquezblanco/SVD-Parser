@@ -19,6 +19,7 @@ public class SvdField {
 	private String mDescription;
 	private Integer mBitOffset;
 	private Integer mBitWidth;
+	private SvdAccess mAccess;
 
 	/**
 	 * Create an SvdField from a DOM element.
@@ -88,14 +89,21 @@ public class SvdField {
 			}
 		}
 
-		return new SvdField(name, description, bitOffset, bitWidth);
+		// Parse access
+		SvdAccess access = null;
+		Element accessElement = Utils.getSingleFirstOrderChildElementByTagName(el, "access");
+		if (accessElement != null)
+			access = SvdAccess.fromString(accessElement.getTextContent());
+
+		return new SvdField(name, description, bitOffset, bitWidth, access);
 	}
 
-	private SvdField(String name, String description, Integer bitOffset, Integer bitWidth) {
+	private SvdField(String name, String description, Integer bitOffset, Integer bitWidth, SvdAccess access) {
 		mName = name;
 		mDescription = description;
 		mBitOffset = bitOffset;
 		mBitWidth = bitWidth;
+		mAccess = access;
 	}
 
 	/**
@@ -167,6 +175,15 @@ public class SvdField {
 		return "[" + msb + ":" + lsb + "]";
 	}
 
+	/**
+	 * Get the access permission for this field.
+	 *
+	 * @return The {@link SvdAccess} value, or null if not specified.
+	 */
+	public SvdAccess getAccess() {
+		return mAccess;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SvdField{name=\"" + mName + "\"");
@@ -177,6 +194,8 @@ public class SvdField {
 			if (mBitWidth != null)
 				sb.append(", bitWidth=" + mBitWidth);
 		}
+		if (mAccess != null)
+			sb.append(", access=\"" + mAccess.getSvdValue() + "\"");
 		sb.append("}");
 		return sb.toString();
 	}
