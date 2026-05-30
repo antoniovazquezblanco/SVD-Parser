@@ -10,7 +10,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * This class represents a register of a device peripheral.
+ * This class represents the {@code <registers>} block of a peripheral.
  */
 public class SvdRegisters {
 	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess)
@@ -25,9 +25,13 @@ public class SvdRegisters {
 		if (!el.getNodeName().equals("registers"))
 			throw new SvdParserException("Cannot build an SvdRegisters from a " + el.getNodeName() + " node!");
 
-		// Parse register elements
-		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "register"))
-			registers.addAll(SvdRegister.fromElement(e, defaultSize, defaultAccess));
+		// Process cluster children
+		for (Element c : Utils.getFirstOrderChildElementsByTagName(el, "cluster"))
+			registers.addAll(SvdCluster.fromElement(c, defaultSize, defaultAccess));
+
+		// Process register children
+		for (Element r : Utils.getFirstOrderChildElementsByTagName(el, "register"))
+			registers.addAll(SvdRegister.fromElement(r, defaultSize, defaultAccess));
 
 		return registers;
 	}
