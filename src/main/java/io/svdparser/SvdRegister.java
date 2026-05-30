@@ -31,6 +31,25 @@ public class SvdRegister {
 	 */
 	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess)
 			throws SvdParserException {
+		return fromElement(el, defaultSize, defaultAccess, 0, "");
+	}
+
+	/**
+	 * Create an SvdRegister from a DOM element, adjusting address and name for
+	 * cluster membership.
+	 *
+	 * @param el            DOM element object.
+	 * @param defaultSize   Default register size inherited from the parent.
+	 * @param defaultAccess Default access mode inherited from the parent.
+	 * @param baseOffset    Address offset already accumulated from enclosing
+	 *                      clusters.
+	 * @param namePrefix    Name prefix to prepend (e.g. "CH_" for a cluster named
+	 *                      CH).
+	 * @return A list of SvdRegister objects (more than one when dim > 1).
+	 * @throws SvdParserException on SVD format errors.
+	 */
+	static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess, int baseOffset,
+			String namePrefix) throws SvdParserException {
 		// Element null check
 		if (el == null)
 			return null;
@@ -80,8 +99,9 @@ public class SvdRegister {
 		ArrayList<SvdRegister> regs = new ArrayList<SvdRegister>();
 		for (Integer i = 0; i < dim; i++) {
 			Integer addrIncrement = i * dimIncrement;
-			String regName = name.formatted(String.valueOf(i));
-			regs.add(new SvdRegister(regName, description, defaultSize, offset + addrIncrement, access, fields));
+			String regName = namePrefix + name.formatted(String.valueOf(i));
+			regs.add(new SvdRegister(regName, description, defaultSize, baseOffset + offset + addrIncrement, access,
+					fields));
 		}
 		return regs;
 	}
