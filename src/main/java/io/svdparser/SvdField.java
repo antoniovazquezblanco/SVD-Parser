@@ -31,7 +31,7 @@ public class SvdField {
 	 * @return A SvdField object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static SvdField fromElement(Element el) throws SvdParserException {
+	public static SvdField fromElement(Element el, SvdAccess defaultAccess) throws SvdParserException {
 		// Element null check
 		if (el == null)
 			return null;
@@ -93,7 +93,7 @@ public class SvdField {
 		}
 
 		// Parse access
-		SvdAccess access = null;
+		SvdAccess access = defaultAccess;
 		Element accessElement = Utils.getSingleFirstOrderChildElementByTagName(el, "access");
 		if (accessElement != null)
 			access = SvdAccess.fromString(accessElement.getTextContent());

@@ -104,7 +104,7 @@ public class SvdPeripheral {
 		Element registersElement = Utils.getSingleFirstOrderChildElementByTagName(el, "registers");
 		if (registersElement != null)
 			for (Element e : Utils.getFirstOrderChildElementsByTagName(registersElement, "register"))
-				registers.addAll(SvdRegister.fromElement(e, defaultSize));
+				registers.addAll(SvdRegister.fromElement(e, defaultSize, null));
 
 		ArrayList<SvdPeripheral> periph = new ArrayList<SvdPeripheral>();
 		for (Integer i = 0; i < dim; i++) {

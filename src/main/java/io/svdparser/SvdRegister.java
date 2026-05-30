@@ -17,17 +17,20 @@ public class SvdRegister {
 	private String mDescription;
 	private Integer mSize;
 	private Integer mOffset;
+	private SvdAccess mAccess;
 	private List<SvdField> mFields;
 
 	/**
 	 * Create an SvdRegister from a DOM element.
-	 * 
-	 * @param el          DOM element object.
-	 * @param defaultSize Default register size to inherit.
-	 * @return A SvdRegister object.
+	 *
+	 * @param el            DOM element object.
+	 * @param defaultSize   Default register size inherited from the parent.
+	 * @param defaultAccess Default access mode inherited from the parent.
+	 * @return A list of SvdRegister objects (more than one when dim > 1).
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static ArrayList<SvdRegister> fromElement(Element el, Integer defaultSize) throws SvdParserException {
+	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess)
+			throws SvdParserException {
 		// Element null check
 		if (el == null)
 			return null;
@@ -59,12 +62,18 @@ public class SvdRegister {
 		Element offsetElement = Utils.getSingleFirstOrderChildElementByTagName(el, "addressOffset");
 		Integer offset = Integer.decode(offsetElement.getTextContent());
 
+		// Parse access (register-level overrides inherited default)
+		SvdAccess access = defaultAccess;
+		Element accessElement = Utils.getSingleFirstOrderChildElementByTagName(el, "access");
+		if (accessElement != null)
+			access = SvdAccess.fromString(accessElement.getTextContent());
+
 		// Parse fields
 		List<SvdField> fields = new ArrayList<SvdField>();
 		Element fieldsElement = Utils.getSingleFirstOrderChildElementByTagName(el, "fields");
 		if (fieldsElement != null) {
 			for (Element e : Utils.getFirstOrderChildElementsByTagName(fieldsElement, "field")) {
-				fields.add(SvdField.fromElement(e));
+				fields.add(SvdField.fromElement(e, access));
 			}
 		}
 
@@ -72,16 +81,18 @@ public class SvdRegister {
 		for (Integer i = 0; i < dim; i++) {
 			Integer addrIncrement = i * dimIncrement;
 			String regName = name.formatted(String.valueOf(i));
-			regs.add(new SvdRegister(regName, description, defaultSize, offset + addrIncrement, fields));
+			regs.add(new SvdRegister(regName, description, defaultSize, offset + addrIncrement, access, fields));
 		}
 		return regs;
 	}
 
-	private SvdRegister(String name, String description, int size, int offset, List<SvdField> fields) {
+	private SvdRegister(String name, String description, int size, int offset, SvdAccess access,
+			List<SvdField> fields) {
 		mName = name;
 		mDescription = description;
 		mSize = size;
 		mOffset = offset;
+		mAccess = access;
 		mFields = fields;
 	}
 
@@ -122,6 +133,15 @@ public class SvdRegister {
 	}
 
 	/**
+	 * Get the access permission for this register.
+	 *
+	 * @return The access permission for this register, or null if not specified.
+	 */
+	public SvdAccess getAccess() {
+		return mAccess;
+	}
+
+	/**
 	 * Get the fields in this register.
 	 *
 	 * @return List of fields.
@@ -139,6 +159,8 @@ public class SvdRegister {
 			sb.append(", size=" + mSize);
 		if (mOffset != null)
 			sb.append(", offset=0x" + Integer.toHexString(mOffset));
+		if (mAccess != null)
+			sb.append(", access=\"" + mAccess + "\"");
 		if (mFields != null && !mFields.isEmpty()) {
 			sb.append(", fields=[");
 			for (SvdField f : mFields) {
