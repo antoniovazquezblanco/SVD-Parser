@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" noNamespaceSchemaLocation="CMSIS-SVD.xsd">
   <vendor>SomeVendor</vendor>
   <vendorID>SomeVendorId</vendorID>
@@ -8,6 +8,7 @@
   <description>DeviceName description</description>
   <addressUnitBits>8</addressUnitBits>
   <width>32</width>
+  <!-- Device-level default size: 32 bits -->
   <size>32</size>
   <resetValue>0x00000000</resetValue>
   <resetMask>0xFFFFFFFF</resetMask>
@@ -21,9 +22,10 @@
     <vendorSystickConfig>0</vendorSystickConfig>
   </cpu>
   <peripherals>
+    <!-- PERIPH1 overrides the device size to 16 bits -->
     <peripheral>
       <name>PERIPH1</name>
-      <description>A peripheral</description>
+      <description>Peripheral with a 16-bit size override</description>
       <baseAddress>0x10000000</baseAddress>
       <addressBlock>
         <offset>0</offset>
@@ -31,22 +33,53 @@
         <usage>registers</usage>
       </addressBlock>
       <groupName>PERIPH_GROUP_1</groupName>
-      <size>0x20</size>
+      <size>16</size>
       <registers>
+        <!-- REG_FROM_PERIPH has no explicit size; inherits 16 bits from the peripheral -->
         <register>
-          <name>REG1</name>
-          <description>Register 1</description>
-          <addressOffset>0x010</addressOffset>
+          <name>REG_FROM_PERIPH</name>
+          <description>Register inheriting size from the peripheral</description>
+          <addressOffset>0x000</addressOffset>
           <access>read-only</access>
-          <resetValue>0xFFFFFFFF</resetValue>
+          <resetValue>0xFFFF</resetValue>
           <fields>
             <field>
               <name>FIELD1</name>
               <description>A register field</description>
               <lsb>0</lsb>
-              <msb>31</msb>
+              <msb>15</msb>
             </field>
           </fields>
+        </register>
+        <!-- REG_OVERRIDE has an explicit 8-bit size that takes precedence over the peripheral -->
+        <register>
+          <name>REG_OVERRIDE</name>
+          <description>Register overriding the inherited size with an explicit 8-bit value</description>
+          <addressOffset>0x002</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0x00</resetValue>
+        </register>
+      </registers>
+    </peripheral>
+    <!-- PERIPH2 has no size; its registers inherit the device-level 32-bit default -->
+    <peripheral>
+      <name>PERIPH2</name>
+      <description>Peripheral without a size override, inheriting the device default</description>
+      <baseAddress>0x20000000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x1000</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <!-- REG_FROM_DEVICE has no explicit size; inherits 32 bits from the device -->
+        <register>
+          <name>REG_FROM_DEVICE</name>
+          <description>Register inheriting size from the device</description>
+          <addressOffset>0x000</addressOffset>
+          <access>read-write</access>
+          <resetValue>0x00000000</resetValue>
         </register>
       </registers>
     </peripheral>
