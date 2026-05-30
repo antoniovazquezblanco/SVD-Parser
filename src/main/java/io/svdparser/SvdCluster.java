@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * This class represents a cluster element within a peripheral's registers
@@ -17,12 +16,13 @@ import org.w3c.dom.Node;
  * registers inside the cluster specify their own {@code addressOffset} relative
  * to the cluster base.
  *
- * <p>Clusters are flattened into a plain list of {@link SvdRegister} objects.
- * Each register's effective offset is adjusted by the cluster's
- * {@code addressOffset} and its name is prefixed with the cluster name (e.g.
- * a register {@code CONFIG} inside cluster {@code CH} becomes
- * {@code CH_CONFIG}). Nested clusters accumulate offsets and prefixes
- * recursively.</p>
+ * <p>
+ * Clusters are flattened into a plain list of {@link SvdRegister} objects. Each
+ * register's effective offset is adjusted by the cluster's
+ * {@code addressOffset} and its name is prefixed with the cluster name (e.g. a
+ * register {@code CONFIG} inside cluster {@code CH} becomes {@code CH_CONFIG}).
+ * Nested clusters accumulate offsets and prefixes recursively.
+ * </p>
  */
 public class SvdCluster {
 	/**
@@ -36,7 +36,8 @@ public class SvdCluster {
 	 *         cluster (including nested clusters, expanded for {@code dim}).
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess) throws SvdParserException {
+	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess)
+			throws SvdParserException {
 		return fromElement(el, defaultSize, defaultAccess, 0, "");
 	}
 
@@ -53,10 +54,11 @@ public class SvdCluster {
 	 *         cluster (including nested clusters, expanded for {@code dim}).
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess, int baseOffset, String namePrefix) throws SvdParserException {
-        // Element null check
-        if (el == null)
-            return null;
+	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess,
+			int baseOffset, String namePrefix) throws SvdParserException {
+		// Element null check
+		if (el == null)
+			return null;
 
 		// XML node name check
 		if (!el.getNodeName().equals("cluster"))
@@ -70,7 +72,8 @@ public class SvdCluster {
 
 		// Parse name and address offset
 		String name = Utils.getSingleFirstOrderChildElementByTagName(el, "name").getTextContent();
-		int clusterOffset = Integer.decode(Utils.getSingleFirstOrderChildElementByTagName(el, "addressOffset").getTextContent());
+		int clusterOffset = Integer
+				.decode(Utils.getSingleFirstOrderChildElementByTagName(el, "addressOffset").getTextContent());
 
 		// Parse size/access overrides from the cluster
 		Element sizeElement = Utils.getSingleFirstOrderChildElementByTagName(el, "size");
@@ -89,12 +92,12 @@ public class SvdCluster {
 			int effectiveBase = baseOffset + clusterOffset + i * dimIncrement;
 
 			// Process nested clusters
-            for (Element c : Utils.getFirstOrderChildElementsByTagName(el, "cluster"))
-                registers.addAll(SvdCluster.fromElement(c, defaultSize, defaultAccess, effectiveBase, clusterPrefix));
+			for (Element c : Utils.getFirstOrderChildElementsByTagName(el, "cluster"))
+				registers.addAll(SvdCluster.fromElement(c, defaultSize, defaultAccess, effectiveBase, clusterPrefix));
 
 			// Process registers
-            for (Element r : Utils.getFirstOrderChildElementsByTagName(el, "register"))
-                registers.addAll(SvdRegister.fromElement(r, defaultSize, defaultAccess, effectiveBase, clusterPrefix));
+			for (Element r : Utils.getFirstOrderChildElementsByTagName(el, "register"))
+				registers.addAll(SvdRegister.fromElement(r, defaultSize, defaultAccess, effectiveBase, clusterPrefix));
 		}
 		return registers;
 	}
