@@ -24,15 +24,16 @@ public class SvdPeripheral {
 
 	/**
 	 * Create an SvdPeripheral from a DOM element.
-	 * 
-	 * @param el           DOM element object.
-	 * @param defaultSize  Default register size to inherit.
-	 * @param otherPeriphs Peripherals to search for peripheral derivation.
-	 * @return A SvdPeripheral peripheral object.
+	 *
+	 * @param el            DOM element object.
+	 * @param defaultSize   Default register size inherited from the device.
+	 * @param defaultAccess Default access mode inherited from the device.
+	 * @param otherPeriphs  Peripherals to search for peripheral derivation.
+	 * @return A list of SvdPeripheral objects.
 	 * @throws SvdParserException on SVD format errors.
 	 */
-	public static ArrayList<SvdPeripheral> fromElement(Element el, int defaultSize, List<SvdPeripheral> otherPeriphs)
-			throws SvdParserException {
+	public static ArrayList<SvdPeripheral> fromElement(Element el, int defaultSize, SvdAccess defaultAccess,
+			List<SvdPeripheral> otherPeriphs) throws SvdParserException {
 		// Element null check
 		if (el == null)
 			return null;
@@ -89,6 +90,11 @@ public class SvdPeripheral {
 		if (sizeElement != null)
 			defaultSize = Integer.decode(sizeElement.getTextContent());
 
+		// Peripheral-level access overrides the device default
+		Element accessElement = Utils.getSingleFirstOrderChildElementByTagName(el, "access");
+		if (accessElement != null)
+			defaultAccess = SvdAccess.fromString(accessElement.getTextContent());
+
 		// Parse address blocks
 		List<SvdAddressBlock> addressBlocks = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "addressBlock"))
@@ -99,12 +105,13 @@ public class SvdPeripheral {
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(el, "interrupt"))
 			interrupts.add(SvdInterrupt.fromElement(e));
 
-		// Parse registers
+		// Parse registers and clusters
 		List<SvdRegister> registers = new ArrayList<>();
 		Element registersElement = Utils.getSingleFirstOrderChildElementByTagName(el, "registers");
-		if (registersElement != null)
+		if (registersElement != null) {
 			for (Element e : Utils.getFirstOrderChildElementsByTagName(registersElement, "register"))
-				registers.addAll(SvdRegister.fromElement(e, defaultSize, null));
+				registers.addAll(SvdRegister.fromElement(e, defaultSize, defaultAccess));
+		}
 
 		ArrayList<SvdPeripheral> periph = new ArrayList<SvdPeripheral>();
 		for (Integer i = 0; i < dim; i++) {
@@ -187,7 +194,7 @@ public class SvdPeripheral {
 
 	/**
 	 * Get a list of address blocks that the peripheral contains.
-	 * 
+	 *
 	 * @return A list of SvdAddressBlock objects.
 	 */
 	public List<SvdAddressBlock> getAddressBlocks() {
@@ -205,7 +212,7 @@ public class SvdPeripheral {
 
 	/**
 	 * Get a list of registers that the peripheral contains.
-	 * 
+	 *
 	 * @return A list of SvdRegister objects.
 	 */
 	public List<SvdRegister> getRegisters() {

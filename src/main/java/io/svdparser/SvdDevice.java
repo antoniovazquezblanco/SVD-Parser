@@ -135,11 +135,17 @@ public class SvdDevice {
 		if (sizeElement != null)
 			defaultSize = Integer.decode(sizeElement.getTextContent());
 
+		// Parse device-level access default
+		SvdAccess defaultAccess = null;
+		Element accessElement = Utils.getSingleFirstOrderChildElementByTagName(el, "access");
+		if (accessElement != null)
+			defaultAccess = SvdAccess.fromString(accessElement.getTextContent());
+
 		// Parse peripherals info
 		Element peripheralsElement = Utils.getSingleFirstOrderChildElementByTagName(el, "peripherals");
 		List<SvdPeripheral> periphs = new ArrayList<>();
 		for (Element e : Utils.getFirstOrderChildElementsByTagName(peripheralsElement, "peripheral"))
-			periphs.addAll(SvdPeripheral.fromElement(e, defaultSize, periphs));
+			periphs.addAll(SvdPeripheral.fromElement(e, defaultSize, defaultAccess, periphs));
 
 		// Return the new SVD device
 		return new SvdDevice(vendor, vendorID, name, series, version, description, licenseText, addressUnitBits, width,
