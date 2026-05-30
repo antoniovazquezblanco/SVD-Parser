@@ -106,12 +106,8 @@ public class SvdPeripheral {
 			interrupts.add(SvdInterrupt.fromElement(e));
 
 		// Parse registers and clusters
-		List<SvdRegister> registers = new ArrayList<>();
 		Element registersElement = Utils.getSingleFirstOrderChildElementByTagName(el, "registers");
-		if (registersElement != null) {
-			for (Element e : Utils.getFirstOrderChildElementsByTagName(registersElement, "register"))
-				registers.addAll(SvdRegister.fromElement(e, defaultSize, defaultAccess));
-		}
+		List<SvdRegister> registers = SvdRegisters.fromElement(registersElement, defaultSize, defaultAccess);
 
 		ArrayList<SvdPeripheral> periph = new ArrayList<SvdPeripheral>();
 		for (Integer i = 0; i < dim; i++) {
