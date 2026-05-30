@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance">
+  <name>ClusterNestedTest</name>
+  <version>1.0</version>
+  <description>Test device for a cluster nested inside another cluster</description>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+  <peripherals>
+    <peripheral>
+      <name>PERIPH0</name>
+      <description>Peripheral with nested clusters</description>
+      <baseAddress>0x40000000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x200</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <!--
+          OUTER cluster at 0x100.
+          Inside OUTER: a direct register DATA at 0x0 (effective 0x100)
+          and an INNER cluster at 0x20.
+          Inside INNER: REG at 0x0 (effective 0x100 + 0x20 + 0x0 = 0x120).
+          Name prefixes accumulate: OUTER_DATA, OUTER_INNER_REG.
+        -->
+        <cluster>
+          <name>OUTER</name>
+          <description>Outer cluster</description>
+          <addressOffset>0x100</addressOffset>
+          <cluster>
+            <name>INNER</name>
+            <description>Inner cluster nested inside OUTER</description>
+            <addressOffset>0x20</addressOffset>
+            <register>
+              <name>REG</name>
+              <description>Register inside the nested cluster</description>
+              <addressOffset>0x0</addressOffset>
+              <size>32</size>
+            </register>
+          </cluster>
+          <register>
+            <name>DATA</name>
+            <description>Register directly inside OUTER cluster</description>
+            <addressOffset>0x0</addressOffset>
+            <size>32</size>
+          </register>
+        </cluster>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>
