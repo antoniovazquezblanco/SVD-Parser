@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
- * SPDX-FileCopyrightText: Antonio Vázquez Blanco 2023-2025
+ * SPDX-FileCopyrightText: Antonio Vázquez Blanco 2023-2026
  */
 
 /**
