@@ -61,7 +61,7 @@ public enum SvdAccess {
 	 */
 	public static SvdAccess fromString(String value) throws SvdParserException {
 		for (SvdAccess access : values())
-			if (access.mSvdValue.equals(value))
+			if (access.mSvdValue.equalsIgnoreCase(value))
 				return access;
 		throw new SvdParserException("Unknown access value: \"" + value + "\"");
 	}
