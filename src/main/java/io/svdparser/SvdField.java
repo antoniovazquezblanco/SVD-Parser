@@ -22,7 +22,7 @@ public class SvdField {
 	private Integer mBitOffset;
 	private Integer mBitWidth;
 	private SvdAccess mAccess;
-	private List<SvdEnumeratedValue> mEnumeratedValues;
+	private List<SvdEnumeratedValues> mEnumeratedValues;
 
 	/**
 	 * Create an SvdField from a DOM element.
@@ -98,20 +98,20 @@ public class SvdField {
 		if (accessElement != null)
 			access = SvdAccess.fromString(accessElement.getTextContent());
 
-		// Parse enumeratedValues
-		List<SvdEnumeratedValue> enumeratedValues = null;
-		Element enumeratedValuesElement = Utils.getSingleFirstOrderChildElementByTagName(el, "enumeratedValues");
-		if (enumeratedValuesElement != null) {
-			enumeratedValues = new ArrayList<>();
-			for (Element enumeratedValueElement : Utils.getFirstOrderChildElementsByTagName(enumeratedValuesElement,
-					"enumeratedValue"))
-				enumeratedValues.add(SvdEnumeratedValue.fromElement(enumeratedValueElement));
+		// Parse enumeratedValues (a field may have up to two blocks: one for read, one
+		// for write)
+		List<SvdEnumeratedValues> enumeratedValues = null;
+		for (Element evsElement : Utils.getFirstOrderChildElementsByTagName(el, "enumeratedValues")) {
+			if (enumeratedValues == null)
+				enumeratedValues = new ArrayList<>();
+			enumeratedValues.add(SvdEnumeratedValues.fromElement(evsElement));
 		}
+
 		return new SvdField(name, description, bitOffset, bitWidth, access, enumeratedValues);
 	}
 
 	private SvdField(String name, String description, Integer bitOffset, Integer bitWidth, SvdAccess access,
-			List<SvdEnumeratedValue> enumeratedValues) {
+			List<SvdEnumeratedValues> enumeratedValues) {
 		mName = name;
 		mDescription = description;
 		mBitOffset = bitOffset;
@@ -199,11 +199,16 @@ public class SvdField {
 	}
 
 	/**
-	 * Get the list of enumerated values for this field.
+	 * Get the enumerated values groups for this field.
 	 *
-	 * @return A list of SvdEnumeratedValue objects, empty if none are defined.
+	 * @return A list of {@link SvdEnumeratedValues} groups, or {@code null} if none
+	 *         are defined. A field with no separate read/write semantics has one
+	 *         group with usage {@link SvdEnumeratedValuesUsage#READ_WRITE}; a field
+	 *         with split semantics has two groups, one with
+	 *         {@link SvdEnumeratedValuesUsage#READ} and one with
+	 *         {@link SvdEnumeratedValuesUsage#WRITE}.
 	 */
-	public List<SvdEnumeratedValue> getEnumeratedValues() {
+	public List<SvdEnumeratedValues> getEnumeratedValues() {
 		return mEnumeratedValues;
 	}
 
@@ -221,8 +226,8 @@ public class SvdField {
 			sb.append(", access=\"" + mAccess.getSvdValue() + "\"");
 		if (mEnumeratedValues != null && !mEnumeratedValues.isEmpty()) {
 			sb.append(", enumeratedValues=[");
-			for (SvdEnumeratedValue ev : mEnumeratedValues)
-				sb.append(ev.toString() + ",");
+			for (SvdEnumeratedValues evs : mEnumeratedValues)
+				sb.append(evs.toString() + ",");
 			sb.append("]");
 		}
 		sb.append("}");

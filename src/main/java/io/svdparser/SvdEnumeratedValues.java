@@ -10,9 +10,9 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 /**
- * This class represents an {@code <enumeratedValues>} block within a field.
- * A single field may contain up to two such blocks: one for read access and
- * one for write access, distinguished by the {@link Usage} value. When
+ * This class represents an {@code <enumeratedValues>} block within a field. A
+ * single field may contain up to two such blocks: one for read access and one
+ * for write access, distinguished by the {@link Usage} value. When
  * {@code <usage>} is absent the block applies to both read and write
  * ({@link Usage#READ_WRITE}).
  */
@@ -34,8 +34,7 @@ public class SvdEnumeratedValues {
 			return null;
 
 		if (!el.getNodeName().equals("enumeratedValues"))
-			throw new SvdParserException(
-					"Cannot build an SvdEnumeratedValues from a " + el.getNodeName() + " node!");
+			throw new SvdParserException("Cannot build an SvdEnumeratedValues from a " + el.getNodeName() + " node!");
 
 		String name = null;
 		Element nameElement = Utils.getSingleFirstOrderChildElementByTagName(el, "name");
