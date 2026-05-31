@@ -36,10 +36,8 @@ jobs:
       contents: write
     if: contains(github.ref, 'refs/tags/v')
     steps:
-    - name: Create a release
-      uses: ncipollo/release-action@v1.21.0
-      with:
-        allowUpdates: true
+    - name: Release
+      uses: softprops/action-gh-release@v3
 
   publish:
     needs: release
