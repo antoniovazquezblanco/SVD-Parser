@@ -12,9 +12,9 @@ import org.w3c.dom.Element;
 /**
  * This class represents an {@code <enumeratedValues>} block within a field. A
  * single field may contain up to two such blocks: one for read access and one
- * for write access, distinguished by the {@link Usage} value. When
- * {@code <usage>} is absent the block applies to both read and write
- * ({@link Usage#READ_WRITE}).
+ * for write access, distinguished by the {@link SvdEnumeratedValuesUsage} value.
+ * When {@code <usage>} is absent the block applies to both read and write
+ * ({@link SvdEnumeratedValuesUsage#READ_WRITE}).
  */
 public class SvdEnumeratedValues {
 
