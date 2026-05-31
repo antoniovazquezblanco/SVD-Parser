@@ -26,6 +26,9 @@ jobs:
     - name: Build
       run: gradle printVersion build
 
+    - name: Javadoc
+      run: gradle javadoc
+
     - name: Test
       run: gradle printVersion test
 
