@@ -13,6 +13,15 @@ import org.w3c.dom.Element;
  * This class represents the {@code <registers>} block of a peripheral.
  */
 public class SvdRegisters {
+	/**
+	 * Parse all registers and clusters from a {@code <registers>} DOM element.
+	 *
+	 * @param el            DOM element representing the {@code <registers>} block.
+	 * @param defaultSize   Default register bit-width inherited from the peripheral.
+	 * @param defaultAccess Default access rights inherited from the peripheral.
+	 * @return A flat list of {@link SvdRegister} objects.
+	 * @throws SvdParserException on SVD format errors.
+	 */
 	public static List<SvdRegister> fromElement(Element el, Integer defaultSize, SvdAccess defaultAccess)
 			throws SvdParserException {
 		List<SvdRegister> registers = new ArrayList<>();

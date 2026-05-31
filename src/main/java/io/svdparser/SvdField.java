@@ -27,7 +27,8 @@ public class SvdField {
 	/**
 	 * Create an SvdField from a DOM element.
 	 *
-	 * @param el DOM element object.
+	 * @param el            DOM element object.
+	 * @param defaultAccess Default access rights inherited from the parent register.
 	 * @return A SvdField object.
 	 * @throws SvdParserException on SVD format errors.
 	 */
