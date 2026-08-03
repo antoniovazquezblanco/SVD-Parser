@@ -21,7 +21,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Install Gradle
-      uses: gradle/actions/setup-gradle@v6
+      uses: gradle/actions/setup-gradle@v6.2.0
 
     - name: Build
       run: gradle printVersion build
@@ -59,7 +59,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Install Gradle
-      uses: gradle/actions/setup-gradle@v6
+      uses: gradle/actions/setup-gradle@v6.2.0
 
     - name: Publish
       env:
